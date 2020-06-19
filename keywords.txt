@@ -1,0 +1,5 @@
+writeBit	KEYWORD1
+writeByte	KEYWORD1
+batchBegin	KEYWORD2
+batchWrite	KEYWORD3
+
