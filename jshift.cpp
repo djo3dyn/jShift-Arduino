@@ -1,7 +1,24 @@
+/* ==========================================================================
+ * jShift - General Library untuk IC 74HC595
+ * 
+ * Tujuan : 
+ * - Meringkaskan Fungsi-fungsi shift data apabila menggunakan IC 74HC595
+ * - Menambah Output digital pada Arduino
+ * - Diperuntukan untuk output kecil seperti LED
+ * 
+ * Hanya menggunakan 3 pin Arduino
+ * Dapat dipasang hingga 64 buah IC 74HC595
+ * Koneksi IC Daisy Chain
+ * 
+ * (c) 2020 - judincahsigerung@gmail.com
+ * ==============================================================================*/
+
 #include "Arduino.h"
 #include "jshift.h"
 
-jshift::jshift(int _clockPin , int _dataPin , int _latchPin , int _count )
+
+// Inisiasi Shift Register
+jshift::jshift(uint8_t _clockPin , uint8_t _dataPin , uint8_t _latchPin , uint8_t _count )
 {
     clockPin = _clockPin ;
     dataPin = _dataPin ;
@@ -15,19 +32,8 @@ jshift::jshift(int _clockPin , int _dataPin , int _latchPin , int _count )
     pinMode(_latchPin , OUTPUT);
 }
 
-jshift::jshift(int _clockPin , int _dataPin , int _latchPin)
-{
-    clockPin = _clockPin ;
-    dataPin = _dataPin ;
-    latchPin = _latchPin ;
-    count = 0 ;
-
-    pinMode(_clockPin , OUTPUT);
-    pinMode(_dataPin , OUTPUT);
-    pinMode(_latchPin , OUTPUT);
-}
-
-void jshift::shiftByte(unsigned char _data)
+// Shift 8 bit without latch
+void jshift::shiftByte(uint8_t _data)
 {
     for (int i = 0 ; i < 8 ; i++)  
     {
@@ -39,7 +45,8 @@ void jshift::shiftByte(unsigned char _data)
 
 }
 
-void jshift::shiftAllOut(int _count)
+// Shift All data and latch
+void jshift::shiftAllOut(uint8_t _count)
 {
     digitalWrite(latchPin , HIGH);
     
@@ -51,7 +58,8 @@ void jshift::shiftAllOut(int _count)
     digitalWrite(latchPin , LOW);
 }
 
-void jshift::writeBit(int _expNo , int _pin , int _stat)
+// write 1 bit ke IC tujuan
+void jshift::writeBit(uint8_t _expNo , uint8_t _pin , uint8_t _stat)
 {
     unsigned char temp;
     temp = ((temp | 1) << _pin);
@@ -61,7 +69,8 @@ void jshift::writeBit(int _expNo , int _pin , int _stat)
     if(!batchMode)  shiftAllOut(count);
 }
 
-void jshift::writeBit(int _pin , int _stat)
+// Write 1 bit ke IC no. 1
+void jshift::writeBit(uint8_t _pin , uint8_t _stat)
 {
     unsigned char temp;
     temp = ((temp | 1) << _pin);
@@ -71,13 +80,13 @@ void jshift::writeBit(int _pin , int _stat)
     if(!batchMode) shiftAllOut(count);
 }
 
-void jshift::writeByte(int _expNo , unsigned char _data)
+void jshift::writeByte(uint8_t _expNo , uint8_t _data)
 {
     registerData[_expNo] = _data ;
     if(!batchMode) shiftAllOut(count);
 }
 
-void jshift::writeByte(unsigned char _data)
+void jshift::writeByte(uint8_t _data)
 {
     registerData[0] = _data ;
     if(!batchMode) shiftAllOut(count);
